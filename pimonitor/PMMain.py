@@ -1,147 +1,135 @@
 # -*- coding: utf-8 -*-
 
-'''
+"""
 Created on 29-03-2013
 
 @author: citan
-'''
+"""
 
-import array
 import os
 import os.path
 import time
 import cPickle as pickle
+import platform
 
 from pimonitor.PM import PM
 from pimonitor.PMConnection import PMConnection
 from pimonitor.PMDemoConnection import PMDemoConnection
-from pimonitor.PMPacket import PMPacket
-from pimonitor.PMParameter import PMParameter
-from pimonitor.PMUtils import PMUtils
 from pimonitor.PMXmlParser import PMXmlParser
-
 from pimonitor.ui.PMScreen import PMScreen
 from pimonitor.ui.PMSingleWindow import PMSingleWindow
 
+
 if __name__ == '__main__':
 
-	from evdev import InputDevice, list_devices
-	devices = map(InputDevice, list_devices())
-	eventX = ""
-	for dev in devices:
-			if dev.name == "ADS7846 Touchscreen":
-				eventX = dev.fn
+    print platform.system()
 
-	os.environ["SDL_FBDEV"] = "/dev/fb1"
-	os.environ["SDL_MOUSEDRV"] = "TSLIB"
-	os.environ["SDL_MOUSEDEV"] = eventX
+    if platform.system() == "Linux":
+        from evdev import InputDevice, list_devices
 
-	screen = PMScreen()
-	log_id = PM.log('Application started')
-	
-	screen.render()
-	
-	parser = PMXmlParser();
+        devices = map(InputDevice, list_devices())
+        eventX = ""
+        for dev in devices:
+            if dev.name == "ADS7846 Touchscreen":
+                eventX = dev.fn
 
-	supported_parameters = []
-	
-	if os.path.isfile("data/data.pkl"):
-		input = open("data/data.pkl", "rb")
-		defined_parameters = pickle.load(input)
-		input.close()
-	else:
-		defined_parameters = parser.parse("logger_METRIC_EN_v263.xml")
-		output = open("data/data.pkl", "wb")
-		pickle.dump(defined_parameters, output, -1)
-		output.close()		
+        os.environ["SDL_FBDEV"] = "/dev/fb1"
+        os.environ["SDL_MOUSEDRV"] = "TSLIB"
+        os.environ["SDL_MOUSEDEV"] = eventX
 
-	connection = PMConnection()
-	#connection = PMDemoConnection()
-	while True:
-		try:
-			connection.open()
-			ecu_packet = connection.init(1)				
-			tcu_packet = connection.init(2)
-						
-			if ecu_packet == None or tcu_packet == None:
-				PM.log("Can't get initial data", log_id)
-				continue;
-			PM.log("ECU ROM ID: " + ecu_packet.get_rom_id())
-			PM.log("TCU ROM ID: " + tcu_packet.get_rom_id())
-			for p in defined_parameters:
-				if (p.get_target() & 0x1 == 0x1) and p.is_supported(ecu_packet.to_bytes()[4:]):
-					if not filter(lambda x: x.get_id() == p.get_id(), supported_parameters):
-						p.switch_to_ecu_id(ecu_packet.get_rom_id())
-						supported_parameters.append(p)
+    screen = PMScreen()
+    log_id = PM.log('Application started')
 
-			for p in defined_parameters:
-				if ((p.get_target() & 0x2 == 0x2) or (p.get_target() & 0x1 == 0x1)) and p.is_supported(tcu_packet.to_bytes()[4:]):
-					if not filter(lambda x: x.get_id() == p.get_id(), supported_parameters):
-						p.switch_to_ecu_id(tcu_packet.get_rom_id())
-						supported_parameters.append(p)
+    screen.render()
 
-			for p in defined_parameters:				
-				p_deps = p.get_dependencies();
-				if not p_deps:
-					continue
+    parser = PMXmlParser()
 
-				deps_found = () 
-				for dep in p_deps:
-					deps_found = filter(lambda x: x.get_id() == dep, supported_parameters)
-					if not deps_found:
-						break
+    supported_parameters = []
 
-					if len(deps_found) > 1:
-						raise Exception('duplicated dependencies', deps_found) 
-									
-					p.add_parameter(deps_found[0])
+    if os.path.isfile("data/data.pkl"):
+        serializedDataFile = open("data/data.pkl", "rb")
+        defined_parameters = pickle.load(serializedDataFile)
+        serializedDataFile.close()
+    else:
+        defined_parameters = parser.parse("logger_METRIC_EN_v263.xml")
+    # output = open("data/data.pkl", "wb")
+    #pickle.dump(defined_parameters, output, -1)
+    #output.close()
 
-				if deps_found: 
-					supported_parameters.append(p) 					
-				
-			# each ID must be in a form P01 - first letter, then a number
-			# TODO fixme for 263 logger definition
-			# supported_parameters.sort(key=lambda p: int(p.get_id()[1:]), reverse=False)
-			
-			for p in supported_parameters:			
-				window = PMSingleWindow(p)
-				screen.add_window(window)
+    if platform.system() == "Linux":
+        connection = PMConnection()
+    else:
+        connection = PMDemoConnection()
 
-			screen.next_window()
-			
-			while True:
-				window = screen.get_window()
-				param = window.get_parameter()
-				parameters = param.get_parameters()
-				if parameters:
-					packets = connection.read_parameters(parameters)
-					window.set_packets(packets)
-				else:
-					packet = connection.read_parameter(param)
-					window.set_packets([packet])
-				
-				#ecu_response_packets = connection.read_parameters(ecu_params)
-				#tcu_response_packets = connection.read_parameters(tcu_params)
+    while True:
+        try:
+            connection.open()
+            ecu_packet = connection.init(1)
+            tcu_packet = connection.init(2)
 
-				#param_no = 0
-				#for ecu_packet in ecu_response_packets:
-				#	param = ecu_params[param_no]
-				#	window.set_value(param, ecu_packet)
-				#	param_no += 1
+            if ecu_packet is None or tcu_packet is None:
+                PM.log("Can't get initial data", log_id)
+                continue
+            PM.log("ECU ROM ID: " + ecu_packet.get_rom_id())
+            PM.log("TCU ROM ID: " + tcu_packet.get_rom_id())
+            for p in defined_parameters:
+                if (p.get_target() & 0x1 == 0x1) and p.is_supported(ecu_packet.to_bytes()[4:]):
+                    if not filter(lambda x: x.get_id() == p.get_id(), supported_parameters):
+                        p.switch_to_ecu_id(ecu_packet.get_rom_id())
+                        supported_parameters.append(p)
 
-				#param_no = 0
-				#for tcu_packet in tcu_response_packets:
-				#	param = tcu_params[param_no]
-				#	window.set_value(param, tcu_packet)
-				#	param_no += 1
+            for p in defined_parameters:
+                if ((p.get_target() & 0x2 == 0x2) or (p.get_target() & 0x1 == 0x1)) and p.is_supported(
+                        tcu_packet.to_bytes()[4:]):
+                    if not filter(lambda x: x.get_id() == p.get_id(), supported_parameters):
+                        p.switch_to_ecu_id(tcu_packet.get_rom_id())
+                        supported_parameters.append(p)
 
-				screen.render()
+            for p in defined_parameters:
+                p_deps = p.get_dependencies()
+                if not p_deps:
+                    continue
 
-		except IOError as e:
-			PM.log('I/O error: {0} {1}'.format(e.errno, e.strerror), log_id)
-			if connection != None:
-				connection.close()
-				time.sleep(3)
-			continue
+                deps_found = ()
+                for dep in p_deps:
+                    deps_found = filter(lambda x: x.get_id() == dep, supported_parameters)
+                    if not deps_found:
+                        break
 
-	screen.close()
+                    if len(deps_found) > 1:
+                        raise Exception('duplicated dependencies', deps_found)
+
+                    p.add_parameter(deps_found[0])
+
+                if deps_found:
+                    supported_parameters.append(p)
+
+            supported_parameters = sorted(supported_parameters)
+
+            for p in supported_parameters:
+                window = PMSingleWindow(p)
+                screen.add_window(window)
+
+            screen.next_window()
+
+            while True:
+                window = screen.get_window()
+                param = window.get_parameter()
+                parameters = param.get_parameters()
+                if parameters:
+                    packets = connection.read_parameters(parameters)
+                    window.set_packets(packets)
+                else:
+                    packet = connection.read_parameter(param)
+                    window.set_packets([packet])
+
+                screen.render()
+
+        except IOError as e:
+            PM.log('I/O error: {0} {1}'.format(e.errno, e.strerror), log_id)
+            if connection is not None:
+                connection.close()
+                time.sleep(3)
+            continue
+
+    screen.close()

@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo PYTHONPATH=. python /home/pi/devel/PiMonitor/pimonitor/PMMain.py
+sudo PYTHONPATH=. python2.7 /Users/citan/devel/workspace/PiMonitor/pimonitor/PMMain.py
