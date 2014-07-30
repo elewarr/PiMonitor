@@ -100,7 +100,8 @@ if __name__ == '__main__':
 					supported_parameters.append(p) 					
 				
 			# each ID must be in a form P01 - first letter, then a number
-			supported_parameters.sort(key=lambda p: int(p.get_id()[1:]), reverse=False)
+			# TODO fixme for 263 logger definition
+			# supported_parameters.sort(key=lambda p: int(p.get_id()[1:]), reverse=False)
 			
 			for p in supported_parameters:			
 				window = PMSingleWindow(p)
