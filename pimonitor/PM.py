@@ -24,7 +24,7 @@ class PM(object):
         return PM().log_impl(message, mid)
 
     def log_impl(self, message, mid):
-        return self._log(message, mid)
-
-    def in_demo(self):
-        return False
+        if self._log is not None:
+            return self._log(message, mid)
+        else:
+            return -1

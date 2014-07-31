@@ -8,9 +8,6 @@ import array
 
 
 class PMPacket(object):
-    """
-	classdocs
-	"""
     # 0x80
     # destination byte
     # source byte
@@ -48,7 +45,6 @@ class PMPacket(object):
 
         valid = valid and (data[0] == PMPacket._header_byte)
         msg += "invalid header, " if (not valid) else ""
-
 
         # valid = data[4] in PMPacket._valid_bytes
         # msg += "invalid header, expected one of " + ', '.join(hex(s) for s in PMPacket._valid_bytes) +", got: " + hex(data[4]) + ", " if (not valid) else ""
@@ -103,18 +99,6 @@ class PMPacket(object):
 
     def get_source(self):
         return self._src
-
-    def get_rom_id(self):
-        return PMPacket.extract_rom_id(self._data)
-
-    @classmethod
-    def extract_rom_id(cls, data):
-        if data[0] != 0xFF:
-            raise Exception('packet', "not valid init response: " + hex(data[0]) + " instead 0xFF")
-        if len(data) < 9:
-            raise Exception('packet', "not valid init response")
-        rom_id = ((data[4] << 32) | (data[5] << 24) | (data[6] << 16) | (data[7] << 8) | (data[8])) & 0xFFFFFFFFFF
-        return hex(rom_id).lstrip("0x").upper()
 
     @classmethod
     def dump_header(cls, data):

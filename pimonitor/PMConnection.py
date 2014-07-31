@@ -32,6 +32,8 @@ class PMConnection(object):
             bytesize=serial.EIGHTBITS)
         time.sleep(0.2)
 
+        return self._ser is not None
+
     def close(self):
         if self._ser is not None:
             self._ser.close()

@@ -9,8 +9,8 @@ import pygame
 
 class PMWindow(object):
     """
-	classdocs
-	"""
+    classdocs
+    """
 
     def __init__(self):
         self._fg_color = pygame.Color(255, 255, 255)
@@ -37,7 +37,6 @@ class PMWindow(object):
         self._font_aa = 1
 
         self._value_lbl_width = self._value_font.render("999", self._font_aa, self._fg_color).get_width()
-
 
     def render(self):
 

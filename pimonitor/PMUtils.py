@@ -10,9 +10,8 @@ from pimonitor.PM import PM
 
 class PMUtils(object):
     """
-	classdocs
-	"""
-
+    classdocs
+    """
 
     # Return CPU temperature as a character string
     @classmethod

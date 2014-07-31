@@ -10,14 +10,8 @@ import time
 
 
 class PMDemoConnection(object):
-    """
-    classdocs
-    """
 
     def __init__(self):
-        """
-        Constructor
-        """
         self._ser = None
         self._log_id = None
         random.seed()
@@ -29,6 +23,8 @@ class PMDemoConnection(object):
         self._log_id = PM.log(message)
         time.sleep(0.2)
         PM.log(message + " [DONE]", self._log_id)
+
+        return True
 
     def close(self):
         PM.log("Closing serial connection", self._log_id)
@@ -44,12 +40,9 @@ class PMDemoConnection(object):
             
         return PMPacket.from_array(response)
 
-    def send_packet(self, packet):
-        raise Exception('connection', 'should never be called')
-
     def read_parameter(self, parameter):
         time.sleep(0.05)
-        address_len = parameter.get_address_length()
+        address_len = parameter.get_address().get_length()
 
         data = [0x80, 0xF0]  # [0x80, 0xF0, 0x18, 0x02, 0xE8, 0x60, 0xD2]
 

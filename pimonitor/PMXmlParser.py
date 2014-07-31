@@ -8,15 +8,18 @@ import xml.sax
 import os.path
 
 from pimonitor.PM import PM
-from pimonitor.PMParameter import PMParameter
-
-# TODO: dependencies
-# TODO: ecuparams
+from pimonitor.cu.PMCUAddress import PMCUAddress
+from pimonitor.cu.PMCUCalculatedParameter import PMCUCalculatedParameter
+from pimonitor.cu.PMCUConversion import PMCUConversion
+from pimonitor.cu.PMCUFixedAddressParameter import PMCUFixedAddressParameter
+from pimonitor.cu.PMCUParameter import PMCUParameter
+from pimonitor.cu.PMCUStandardParameter import PMCUStandardParameter
+from pimonitor.cu.PMCUSwitchParameter import PMCUSwitchParameter
 
 # <parameter id="P1" name="Engine Load (Relative)" desc="P1" ecubyteindex="8" ecubit="7" target="1">
 # <address>0x000007</address>
-#    <conversions>
-#        <conversion units="%" expr="x*100/255" format="0.00" />
+# <conversions>
+# <conversion units="%" expr="x*100/255" format="0.00" />
 #    </conversions>
 #</parameter>
 
@@ -26,31 +29,44 @@ from pimonitor.PMParameter import PMParameter
 #    </ecu>
 # ... ecu and conversions
 
+#<parameter id="P200" name="Engine Load (Calculated)" desc="P200-Engine load as calculated from MAF and RPM." target="1">
+#   <depends>
+#       <ref parameter="P8" />
+#       <ref parameter="P12" />
+#   </depends>
+#   <conversions>
+#       <conversion units="g/rev" expr="(P12*60)/P8" format="0.00" />
+#   </conversions>
+#</parameter>
+
 # <switch id="S71" name="Clear Memory Terminal" desc="(E) S71" byte="0x000061" bit="0" ecubyteindex="19" target="1" />
 
+
 class PMXmlParser(xml.sax.ContentHandler):
-    """
-	classdocs
-	"""
-
-
     def __init__(self):
-        """
-		Constructor
-		"""
         xml.sax.ContentHandler.__init__(self)
+        self._message = ''
+        self._log_id = 0
+
+        self._element_no = 0
+
+        self._contexts = None
+
+        self._parameter = None
+        self._parameters = set()
+
+        self._characters = ''
+        self._ecu_ids = None
+        self._address_length = 0
 
     def parse(self, file_name):
-        self._parameters = set()
-        self._parameter = None
-        self._element_no = 0
-        self._characters = ''
-        self._ecu_id = None
-
-        self._message = "Parsing XML data"
+        self._message = 'Parsing XML data'
         self._log_id = PM.log(self._message)
-        source = open(os.path.join("data", file_name))
+
+        file_path = os.path.join("data", file_name)
+        source = open(file_path)
         xml.sax.parse(source, self)
+        self.log_progress()
         PM.log(self._message + " [DONE]", self._log_id)
 
         return self._parameters
@@ -58,15 +74,16 @@ class PMXmlParser(xml.sax.ContentHandler):
     def startElement(self, name, attrs):
         pid = None
         desc = None
-        target = None
-        address = None
+        target = 0
         units = None
         expr = None
         value_format = None
+        address = None
+
+        byte_index = PMCUParameter.CU_INVALID_BYTE_INDEX()
+        bit_index = PMCUParameter.CU_INVALID_BIT_INDEX()
 
         if name == "parameter":
-            byte_index = "none"
-            bit_index = "none"
 
             for (k, v) in attrs.items():
                 if k == "id":
@@ -82,12 +99,14 @@ class PMXmlParser(xml.sax.ContentHandler):
                 if k == "target":
                     target = int(v)
 
-            self._parameter = PMParameter(pid, name, desc, byte_index, bit_index, target)
+            if byte_index is not PMCUParameter.CU_INVALID_BYTE_INDEX() and bit_index is not PMCUParameter.CU_INVALID_BIT_INDEX():
+                self._parameter = PMCUStandardParameter(pid, name, desc, byte_index, bit_index, target)
+            elif byte_index is PMCUParameter.CU_INVALID_BYTE_INDEX() and bit_index is PMCUParameter.CU_INVALID_BIT_INDEX():
+                self._parameter = PMCUCalculatedParameter(pid, name, desc, target)
+            else:
+                raise Exception
 
-        if name == "switch":
-            byte_index = "none"
-            bit_index = "none"
-
+        if name == "ecuparam":
             for (k, v) in attrs.items():
                 if k == "id":
                     pid = v
@@ -95,47 +114,35 @@ class PMXmlParser(xml.sax.ContentHandler):
                     name = v
                 if k == "desc":
                     desc = v
+                if k == "target":
+                    target = int(v)
+
+            self._parameter = PMCUFixedAddressParameter(pid, name, desc, target)
+
+        if name == "switch":
+            for (k, v) in attrs.items():
+                if k == "id":
+                    pid = v
+                if k == "name":
+                    name = v
+                if k == "desc":
+                    desc = v
+                if k == "byte":
+                    address = int(v, 16)
                 if k == "ecubyteindex":
                     byte_index = int(v)
                 if k == "bit":
                     bit_index = int(v)
                 if k == "target":
                     target = int(v)
-                if k == "byte":
-                    address = v
 
-            self._parameter = PMParameter(pid, name, desc, byte_index, bit_index, target)  #
-            self._parameter.set_address(int(address, 16), 1)
-
-        if name == "ecuparam":
-            byte_index = "none"
-            bit_index = "none"
-
-            for (k, v) in attrs.items():
-                if k == "id":
-                    pid = v
-                if k == "name":
-                    name = v
-                if k == "desc":
-                    desc = v
-                if k == "target":
-                    target = int(v)
-
-            self._parameter = PMParameter(pid, name, desc, byte_index, bit_index, target)
+            self._parameter = PMCUSwitchParameter(pid, name, desc, address, byte_index, bit_index, target)
 
         if name == "address":
-            self._addrlen = 1
+            self._address_length = 1
             for (k, v) in attrs.items():
                 if k == "length":
-                    self._addrlen = int(v)
-
-        if name == "depends":
-            self._addrlen = 0
-
-        if name == "ref":
-            for (k, v) in attrs.items():
-                if k == "parameter":
-                    self._parameter.add_dependency(v)
+                    self._address_length = int(v)
 
         if name == "conversion":
             for (k, v) in attrs.items():
@@ -146,15 +153,17 @@ class PMXmlParser(xml.sax.ContentHandler):
                 if k == "format":
                     value_format = v
 
-            self._parameter.add_conversion([units, expr, value_format])
+            self._parameter.add_conversion(PMCUConversion(units, expr, value_format))
 
         if name == "ecu":
             for (k, v) in attrs.items():
                 if k == "id":
-                    self._parameter.init_ecu_id(v)
-                    self._ecu_id = self._parameter.get_ecu_id(v)
+                    self._ecu_ids = v.split(",")
 
-        self._name = name
+        if name == "ref":
+            for (k, v) in attrs.items():
+                if k == "parameter":
+                    self._parameter.add_dependency(v)
 
     def characters(self, content):
         self._characters = self._characters + content
@@ -163,39 +172,38 @@ class PMXmlParser(xml.sax.ContentHandler):
         if name == "parameter":
             self._parameters.add(self._parameter)
             self._parameter = None
-            self._addrlen = 0
 
         if name == "ecuparam":
             self._parameters.add(self._parameter)
             self._parameter = None
-            self._addrlen = 0
 
-        #if name == "switch":
-        #self._parameters.add(self._parameter)
-        #self._parameter = None
-        #self._addrlen = 0
+        if name == "switch":
+            self._parameters.add(self._parameter)
+            self._parameter = None
 
         if name == "address":
             self._characters = self._characters.strip()
-            if len(self._characters.strip()) > 0 and self._name == "address" and self._parameter is not None:
-                if self._ecu_id is None:
-                    self._parameter.set_address(int(self._characters, 16), self._addrlen)
-                else:
-                    self._ecu_id.append(int(self._characters, 16))
-                    self._ecu_id.append(self._addrlen)
 
-            self._addrlen = 0
+            if len(self._characters.strip()) > 0:
+
+                if self._parameter.get_cu_type() == PMCUParameter.CU_TYPE_STD_PARAMETER():
+                    self._parameter.set_address(PMCUAddress(int(self._characters, 16), self._address_length))
+                elif self._parameter.get_cu_type() == PMCUParameter.CU_TYPE_FIXED_ADDRESS_PARAMETER():
+                    address = PMCUAddress(int(self._characters, 16), self._address_length)
+                    for ecu_id in self._ecu_ids:
+                        self._parameter.add_ecu_id(ecu_id, address)
+
+            self._address_length = 0
             self._characters = ''
 
         if name == "ecu":
-            self._ecu_id = None
-
-        if name == "depends":
-            pass
-
-        self._name = ""
+            self._ecu_ids = None
 
         self._element_no += 1
 
         if self._element_no % 1000 == 0:
-            PM.log(self._message + " " + str(self._element_no) + " elements", self._log_id)
+            self.log_progress()
+
+    def log_progress(self):
+        PM.log(self._message + " " + str(self._element_no) + " elements, " + str(len(self._parameters)) + " parameters",
+               self._log_id)

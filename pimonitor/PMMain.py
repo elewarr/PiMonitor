@@ -16,6 +16,7 @@ from pimonitor.PM import PM
 from pimonitor.PMConnection import PMConnection
 from pimonitor.PMDemoConnection import PMDemoConnection
 from pimonitor.PMXmlParser import PMXmlParser
+from pimonitor.cu.PMCUContext import PMCUContext
 from pimonitor.ui.PMScreen import PMScreen
 from pimonitor.ui.PMSingleWindow import PMSingleWindow
 
@@ -52,9 +53,10 @@ if __name__ == '__main__':
         serializedDataFile.close()
     else:
         defined_parameters = parser.parse("logger_METRIC_EN_v263.xml")
-    # output = open("data/data.pkl", "wb")
-    #pickle.dump(defined_parameters, output, -1)
-    #output.close()
+        defined_parameters = sorted(defined_parameters, key=lambda x: x.get_id(), reverse=True)
+        output = open("data/data.pkl", "wb")
+        pickle.dump(defined_parameters, output, -1)
+        output.close()
 
     if platform.system() == "Linux":
         connection = PMConnection()
@@ -67,44 +69,20 @@ if __name__ == '__main__':
             ecu_packet = connection.init(1)
             tcu_packet = connection.init(2)
 
-            if ecu_packet is None or tcu_packet is None:
-                PM.log("Can't get initial data", log_id)
-                continue
-            PM.log("ECU ROM ID: " + ecu_packet.get_rom_id())
-            PM.log("TCU ROM ID: " + tcu_packet.get_rom_id())
-            for p in defined_parameters:
-                if (p.get_target() & 0x1 == 0x1) and p.is_supported(ecu_packet.to_bytes()[4:]):
-                    if not filter(lambda x: x.get_id() == p.get_id(), supported_parameters):
-                        p.switch_to_ecu_id(ecu_packet.get_rom_id())
-                        supported_parameters.append(p)
+            ecu_context = PMCUContext(ecu_packet, [1, 3])
+            ecu_parameters = ecu_context.match_parameters(defined_parameters)
+            ecu_switch_parameters = ecu_context.match_switch_parameters(defined_parameters)
+            ecu_calculated_parameters = ecu_context.match_calculated_parameters(defined_parameters, ecu_parameters)
 
-            for p in defined_parameters:
-                if ((p.get_target() & 0x2 == 0x2) or (p.get_target() & 0x1 == 0x1)) and p.is_supported(
-                        tcu_packet.to_bytes()[4:]):
-                    if not filter(lambda x: x.get_id() == p.get_id(), supported_parameters):
-                        p.switch_to_ecu_id(tcu_packet.get_rom_id())
-                        supported_parameters.append(p)
+            tcu_context = PMCUContext(tcu_packet, [2])
+            tcu_parameters = tcu_context.match_parameters(defined_parameters)
+            tcu_switch_parameters = tcu_context.match_switch_parameters(defined_parameters)
+            tcu_calculated_parameters = tcu_context.match_calculated_parameters(defined_parameters, tcu_parameters)
 
-            for p in defined_parameters:
-                p_deps = p.get_dependencies()
-                if not p_deps:
-                    continue
+            PM.log("ECU ROM ID: " + ecu_context.get_rom_id())
+            PM.log("TCU ROM ID: " + tcu_context.get_rom_id())
 
-                deps_found = ()
-                for dep in p_deps:
-                    deps_found = filter(lambda x: x.get_id() == dep, supported_parameters)
-                    if not deps_found:
-                        break
-
-                    if len(deps_found) > 1:
-                        raise Exception('duplicated dependencies', deps_found)
-
-                    p.add_parameter(deps_found[0])
-
-                if deps_found:
-                    supported_parameters.append(p)
-
-            supported_parameters = sorted(supported_parameters)
+            supported_parameters = ecu_parameters + ecu_switch_parameters + ecu_calculated_parameters + tcu_parameters + tcu_switch_parameters + tcu_calculated_parameters
 
             for p in supported_parameters:
                 window = PMSingleWindow(p)
@@ -115,13 +93,13 @@ if __name__ == '__main__':
             while True:
                 window = screen.get_window()
                 param = window.get_parameter()
-                parameters = param.get_parameters()
-                if parameters:
-                    packets = connection.read_parameters(parameters)
-                    window.set_packets(packets)
-                else:
-                    packet = connection.read_parameter(param)
-                    window.set_packets([packet])
+                #parameters = param.get_parameters()
+                #if parameters:
+                #    packets = connection.read_parameters(parameters)
+                #    window.set_packets(packets)
+                #else:
+                packet = connection.read_parameter(param)
+                window.set_packets([packet])
 
                 screen.render()
 

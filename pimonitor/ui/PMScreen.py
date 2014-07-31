@@ -16,16 +16,16 @@ from pimonitor.PMUtils import PMUtils
 
 class PMScreen(object):
     """
-	classdocs
-	"""
+    classdocs
+    """
     LOG_FPS_EVENT = pygame.USEREVENT + 1
     LOG_STATS_EVENT = LOG_FPS_EVENT + 1
     ONE_SEC_EVENT = LOG_STATS_EVENT + 1
 
     def __init__(self):
         """
-		Constructor
-		"""
+        Constructor
+        """
         pygame.init()
         pygame.mouse.set_visible(False)
 
@@ -157,7 +157,6 @@ class PMScreen(object):
 
         if to_be_deleted is not None:
             self._log_queue.remove(to_be_deleted)
-
 
     def purge_logs(self):
         to_be_deleted = []

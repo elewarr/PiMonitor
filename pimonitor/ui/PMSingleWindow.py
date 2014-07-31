@@ -47,7 +47,7 @@ class PMSingleWindow(object):
     def render(self):
         value = "??"
         if self._packets is not None:
-            if self._param.get_address_length() > 0:
+            if self._param.get_address().get_length() > 0:
                 value = self._param.get_value(self._packets[0])
             elif self._param.get_dependencies():
                 value = self._param.get_calculated_value(self._packets)
