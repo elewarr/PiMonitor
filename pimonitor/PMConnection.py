@@ -77,8 +77,8 @@ class PMConnection(object):
         return out_packet
 
     def read_parameter(self, parameter):
-        address = parameter.get_address()
-        address_len = parameter.get_address_length()
+        address = parameter.get_address().get_address()
+        address_len = parameter.get_address().get_length()
 
         data = [0xA8, 0x00]
 
@@ -102,8 +102,8 @@ class PMConnection(object):
             if target != parameter.get_target() and target & 0x01 != parameter.get_target() & 0x01 and target & 0x02 != parameter.get_target() & 0x02:
                 raise Exception('connection', "targets differ: " + str(target) + " vs " + str(parameter.get_target()))
 
-            address = parameter.get_address()
-            address_len = parameter.get_address_length()
+            address = parameter.get_address().get_address()
+            address_len = parameter.get_address().get_length()
             for i in range(0, address_len):
                 target_address = address + i
                 data.append((target_address & 0xffffff) >> 16)
@@ -118,7 +118,7 @@ class PMConnection(object):
         data_offset = 1  # skip E8
 
         for parameter in parameters:
-            address_len = parameter.get_address_length()
+            address_len = parameter.get_address().get_length()
             single_out_data = [0xE8]
             single_out_data.extend(out_data[data_offset:address_len + data_offset])
             single_out_packet = PMPacket(out_packet.get_destination(), out_packet.get_source(), single_out_data)
