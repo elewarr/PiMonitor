@@ -5,6 +5,7 @@ Created on 22-04-2013
 """
 
 import pygame
+from pimonitor.cu.PMCUParameter import PMCUParameter
 
 
 class PMSingleWindow(object):
@@ -47,10 +48,10 @@ class PMSingleWindow(object):
     def render(self):
         value = "??"
         if self._packets is not None:
-            if self._param.get_address().get_length() > 0:
-                value = self._param.get_value(self._packets[0])
-            elif self._param.get_dependencies():
+            if self._param.get_cu_type() == PMCUParameter.CU_TYPE_CALCULATED_PARAMETER():
                 value = self._param.get_calculated_value(self._packets)
+            else:
+                value = self._param.get_value(self._packets[0])
 
         value_lbl_width = self._value_font.render(value, self._font_aa, self._fg_color).get_width()
         self._x_offset = (self._width - value_lbl_width) / 2

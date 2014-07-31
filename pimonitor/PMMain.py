@@ -16,6 +16,7 @@ from pimonitor.PM import PM
 from pimonitor.PMConnection import PMConnection
 from pimonitor.PMDemoConnection import PMDemoConnection
 from pimonitor.PMXmlParser import PMXmlParser
+from pimonitor.cu.PMCUParameter import PMCUParameter
 from pimonitor.cu.PMCUContext import PMCUContext
 from pimonitor.ui.PMScreen import PMScreen
 from pimonitor.ui.PMSingleWindow import PMSingleWindow
@@ -98,8 +99,18 @@ if __name__ == '__main__':
                 #    packets = connection.read_parameters(parameters)
                 #    window.set_packets(packets)
                 #else:
-                packet = connection.read_parameter(param)
-                window.set_packets([packet])
+                if param.get_cu_type() == PMCUParameter.CU_TYPE_STD_PARAMETER():
+                    packet = connection.read_parameter(param)
+                    window.set_packets([packet])
+                elif param.get_cu_type() == PMCUParameter.CU_TYPE_FIXED_ADDRESS_PARAMETER():
+                    packet = connection.read_parameter(param)
+                    window.set_packets([packet])
+                elif param.get_cu_type() == PMCUParameter.CU_TYPE_SWITCH_PARAMETER():
+                    packet = connection.read_parameter(param)
+                    window.set_packets([packet])
+                elif param.get_cu_type() == PMCUParameter.CU_TYPE_CALCULATED_PARAMETER():
+                    packets = connection.read_parameters(param.get_dependencies())
+                    window.set_packets(packets)
 
                 screen.render()
 

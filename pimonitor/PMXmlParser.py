@@ -67,7 +67,7 @@ class PMXmlParser(xml.sax.ContentHandler):
         source = open(file_path)
         xml.sax.parse(source, self)
         self.log_progress()
-        PM.log(self._message + " [DONE]", self._log_id)
+        PM.log(self._message + " [DONE]")
 
         return self._parameters
 

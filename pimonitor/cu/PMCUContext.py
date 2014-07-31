@@ -81,6 +81,7 @@ class PMCUContext(object):
             cu_type = parameter.get_cu_type()
             if cu_type == PMCUParameter.CU_TYPE_CALCULATED_PARAMETER():
                 if parameter.is_supported(supported_parameters):
+                    parameter.fill_dependencies(supported_parameters)
                     matched.append(parameter)
 
         return matched

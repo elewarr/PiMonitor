@@ -65,8 +65,8 @@ class PMCUStandardParameter(PMCUParameter):
 
                 try:
                     value = eval(expr)
-                except (SyntaxError, ZeroDivisionError):
-                    return "exception"
+                except (SyntaxError, ZeroDivisionError, NameError):
+                    return "ERROR EVAL"
 
                 format_tokens = value_format.split(".")
                 output_format = "%.0f"
