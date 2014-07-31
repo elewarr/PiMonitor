@@ -32,8 +32,11 @@ class PMScreen(object):
         # seems to suit RPi
         self._color_depth = 16
 
-        # pygame.display.set_mode((0, 0), pygame.FULLSCREEN, self._color_depth)
-        pygame.display.set_mode((640, 480), 0, self._color_depth)
+        if platform.system() == "Linux":
+            pygame.display.set_mode((0, 0), pygame.FULLSCREEN, self._color_depth)
+        else:
+            pygame.display.set_mode((640, 480), 0, self._color_depth)
+
         self._surface = pygame.display.get_surface()
 
         self._clock = pygame.time.Clock()

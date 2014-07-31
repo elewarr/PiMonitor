@@ -2,28 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1591b6fa-ad4f-4d7a-b643-0b1859455660" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pimonitor/cu/PMCUAddress.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pimonitor/cu/PMCUCalculatedParameter.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pimonitor/cu/PMCUContext.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pimonitor/cu/PMCUConversion.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pimonitor/cu/PMCUFixedAddressParameter.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pimonitor/cu/PMCUParameter.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pimonitor/cu/PMCUStandardParameter.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pimonitor/cu/PMCUSwitchParameter.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pimonitor/test/PMCUTest.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pimonitor/cu/__init__.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pimonitor/test/__init__.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pimonitor/PM.py" afterPath="$PROJECT_DIR$/pimonitor/PM.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pimonitor/PMConnection.py" afterPath="$PROJECT_DIR$/pimonitor/PMConnection.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pimonitor/PMDemoConnection.py" afterPath="$PROJECT_DIR$/pimonitor/PMDemoConnection.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pimonitor/PMMain.py" afterPath="$PROJECT_DIR$/pimonitor/PMMain.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pimonitor/PMPacket.py" afterPath="$PROJECT_DIR$/pimonitor/PMPacket.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pimonitor/ui/PMScreen.py" afterPath="$PROJECT_DIR$/pimonitor/ui/PMScreen.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pimonitor/ui/PMSingleWindow.py" afterPath="$PROJECT_DIR$/pimonitor/ui/PMSingleWindow.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pimonitor/PMUtils.py" afterPath="$PROJECT_DIR$/pimonitor/PMUtils.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pimonitor/ui/PMWindow.py" afterPath="$PROJECT_DIR$/pimonitor/ui/PMWindow.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pimonitor/PMXmlParser.py" afterPath="$PROJECT_DIR$/pimonitor/PMXmlParser.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/run.sh" afterPath="$PROJECT_DIR$/run.sh" />
     </list>
     <ignored path="PiMonitor.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -46,13 +26,35 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="PMMain.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="PMMain.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pimonitor/PMMain.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="1.5403423" vertical-offset="0" max-vertical-offset="1785">
-              <caret line="84" column="142" selection-start-line="84" selection-start-column="142" selection-end-line="84" selection-end-column="142" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1785">
+              <caret line="27" column="36" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="36" />
               <folding>
                 <element signature="e#72#81#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="run.sh" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/run.sh">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-0.6" vertical-offset="0" max-vertical-offset="120">
+              <caret line="1" column="72" selection-start-line="1" selection-start-column="72" selection-end-line="1" selection-end-column="72" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PMScreen.py" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/pimonitor/ui/PMScreen.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.72860634" vertical-offset="4" max-vertical-offset="3735">
+              <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
+              <folding>
+                <element signature="e#47#56#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -99,13 +101,14 @@
         <option value="$PROJECT_DIR$/pimonitor/cu/PMCUSwitchParameter.py" />
         <option value="$PROJECT_DIR$/pimonitor/cu/PMCUParameter.py" />
         <option value="$PROJECT_DIR$/pimonitor/ui/PMSingleWindow.py" />
-        <option value="$PROJECT_DIR$/pimonitor/ui/PMScreen.py" />
         <option value="$PROJECT_DIR$/pimonitor/cu/PMCUContext.py" />
         <option value="$PROJECT_DIR$/pimonitor/test/PMCUTest.py" />
         <option value="$PROJECT_DIR$/pimonitor/cu/PMCUCalculatedParameter.py" />
         <option value="$PROJECT_DIR$/pimonitor/cu/PMCUStandardParameter.py" />
         <option value="$PROJECT_DIR$/pimonitor/cu/PMCUFixedAddressParameter.py" />
         <option value="$PROJECT_DIR$/pimonitor/PMMain.py" />
+        <option value="$PROJECT_DIR$/run.sh" />
+        <option value="$PROJECT_DIR$/pimonitor/ui/PMScreen.py" />
       </list>
     </option>
   </component>
@@ -768,14 +771,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pimonitor/ui/PMScreen.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.14914425" vertical-offset="2203" max-vertical-offset="3585">
-          <caret line="162" column="0" selection-start-line="162" selection-start-column="0" selection-end-line="162" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pimonitor/PMDemoConnection.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="347" max-vertical-offset="1185">
@@ -786,10 +781,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/pimonitor/PMMain.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.5403423" vertical-offset="0" max-vertical-offset="1785">
-          <caret line="84" column="142" selection-start-line="84" selection-start-column="142" selection-end-line="84" selection-end-column="142" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1785">
+          <caret line="27" column="36" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="36" />
           <folding>
             <element signature="e#72#81#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/run.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.6" vertical-offset="0" max-vertical-offset="120">
+          <caret line="1" column="72" selection-start-line="1" selection-start-column="72" selection-end-line="1" selection-end-column="72" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pimonitor/ui/PMScreen.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.72860634" vertical-offset="4" max-vertical-offset="3735">
+          <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
+          <folding>
+            <element signature="e#47#56#0" expanded="true" />
           </folding>
         </state>
       </provider>
