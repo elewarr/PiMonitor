@@ -73,8 +73,6 @@ class PMXmlParser(xml.sax.ContentHandler):
         return self._parameters
 
     def startElement(self, name, attrs):
-        if self._proto_id != "SSM":
-            return
 
         pid = None
         desc = None
@@ -91,10 +89,13 @@ class PMXmlParser(xml.sax.ContentHandler):
 			
             for (k, v) in attrs.items():
                 if k == "id":
+                    print 'protocol ' + v
                     self._proto_id = v
                 
-                    
-        elif name == "parameter":
+        if self._proto_id != "SSM":
+            return
+        
+        if name == "parameter":
 
             for (k, v) in attrs.items():
                 if k == "id":
