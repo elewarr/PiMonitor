@@ -70,7 +70,7 @@ class PMCUCalculatedParameter(PMCUStandardParameter):
                     value = eval(expr)
                 except (SyntaxError, NameError):
                     return "ERROR EVAL"
-                except (ZeroDivisionError):
+                except ZeroDivisionError:
                     return "0.0"
 
                 format_tokens = value_format.split(".")

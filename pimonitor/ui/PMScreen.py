@@ -35,7 +35,7 @@ class PMScreen(object):
         if platform.system() == "Linux":
             pygame.display.set_mode((0, 0), pygame.FULLSCREEN, self._color_depth)
         else:
-            pygame.display.set_mode((640, 480), 0, self._color_depth)
+            pygame.display.set_mode((320, 240), 0, self._color_depth)
 
         self._surface = pygame.display.get_surface()
 
@@ -92,8 +92,9 @@ class PMScreen(object):
                 self._fps_log_id = PM.log("FPS %.2f" % self._clock.get_fps(), self._fps_log_id)
 
             elif event.type == PMScreen.LOG_STATS_EVENT:
-                if platform.system() == "Linux":
-                    PMUtils.log_os_stats()
+                #if platform.system() == "Linux":
+                #    PMUtils.log_os_stats()
+                pass
             elif event.type == pygame.QUIT:
                 self.close()
                 sys.exit()

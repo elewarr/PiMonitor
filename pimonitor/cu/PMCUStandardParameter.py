@@ -48,7 +48,7 @@ class PMCUStandardParameter(PMCUParameter):
             value_format = conversion.get_format()
 
             if unit == curr_unit:
-                #print 'unit=' + unit + ', expr=' + expr + ', format=' + value_format
+                # print 'unit=' + unit + ', expr=' + expr + ', format=' + value_format
                 # ignore 0xe8
                 index = 1
                 x = 0
@@ -73,8 +73,8 @@ class PMCUStandardParameter(PMCUParameter):
                 except (ZeroDivisionError):
                     return "0.0"
 
-		#print 'value=' + str(value)
-		value = float(value)
+                #print 'value=' + str(value)
+                value = float(value)
                 format_tokens = value_format.split(".")
                 output_format = "%.0f"
                 if len(format_tokens) > 1:

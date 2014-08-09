@@ -11,6 +11,7 @@ import os.path
 import time
 import cPickle as pickle
 import platform
+import re
 
 from pimonitor.PM import PM
 from pimonitor.PMConnection import PMConnection
@@ -20,6 +21,12 @@ from pimonitor.cu.PMCUParameter import PMCUParameter
 from pimonitor.cu.PMCUContext import PMCUContext
 from pimonitor.ui.PMScreen import PMScreen
 from pimonitor.ui.PMSingleWindow import PMSingleWindow
+
+
+def stringSplitByNumbers(x):
+    r = re.compile('(\d+)')
+    l = r.split(x.get_id())
+    return [int(y) if y.isdigit() else y for y in l]
 
 
 if __name__ == '__main__':
@@ -85,6 +92,7 @@ if __name__ == '__main__':
 
             supported_parameters = ecu_parameters + ecu_switch_parameters + ecu_calculated_parameters + tcu_parameters + tcu_switch_parameters + tcu_calculated_parameters
 
+            supported_parameters = sorted(supported_parameters, key=stringSplitByNumbers)
             for p in supported_parameters:
                 window = PMSingleWindow(p)
                 screen.add_window(window)
@@ -94,7 +102,7 @@ if __name__ == '__main__':
             while True:
                 window = screen.get_window()
                 param = window.get_parameter()
-                #parameters = param.get_parameters()
+                # parameters = param.get_parameters()
                 #if parameters:
                 #    packets = connection.read_parameters(parameters)
                 #    window.set_packets(packets)
@@ -122,3 +130,4 @@ if __name__ == '__main__':
             continue
 
     screen.close()
+

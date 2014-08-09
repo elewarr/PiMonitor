@@ -20,7 +20,7 @@ from pimonitor.cu.PMCUSwitchParameter import PMCUSwitchParameter
 # <address>0x000007</address>
 # <conversions>
 # <conversion units="%" expr="x*100/255" format="0.00" />
-#    </conversions>
+# </conversions>
 #</parameter>
 
 #<ecuparam id="E20" name="Manifold Absolute Pressure (Direct)*" desc="E20-Manifold Absolute Pressure with " target="1">
@@ -85,16 +85,16 @@ class PMXmlParser(xml.sax.ContentHandler):
         byte_index = PMCUParameter.CU_INVALID_BYTE_INDEX()
         bit_index = PMCUParameter.CU_INVALID_BIT_INDEX()
 
-        if name == "protocol" :
-			
+        if name == "protocol":
+
             for (k, v) in attrs.items():
                 if k == "id":
                     print 'protocol ' + v
                     self._proto_id = v
-                
+
         if self._proto_id != "SSM":
             return
-        
+
         if name == "parameter":
 
             for (k, v) in attrs.items():
@@ -185,7 +185,7 @@ class PMXmlParser(xml.sax.ContentHandler):
     def endElement(self, name):
         if self._proto_id != "SSM":
             return
-    		
+
         if name == "parameter":
             self._parameters.add(self._parameter)
             self._parameter = None
