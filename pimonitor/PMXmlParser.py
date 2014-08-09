@@ -58,6 +58,7 @@ class PMXmlParser(xml.sax.ContentHandler):
         self._characters = ''
         self._ecu_ids = None
         self._address_length = 0
+        self._proto_id = ''
 
     def parse(self, file_name):
         self._message = 'Parsing XML data'
@@ -72,6 +73,8 @@ class PMXmlParser(xml.sax.ContentHandler):
         return self._parameters
 
     def startElement(self, name, attrs):
+    	if self._proto_id != "SSM":
+    		return
         pid = None
         desc = None
         target = 0
@@ -83,7 +86,14 @@ class PMXmlParser(xml.sax.ContentHandler):
         byte_index = PMCUParameter.CU_INVALID_BYTE_INDEX()
         bit_index = PMCUParameter.CU_INVALID_BIT_INDEX()
 
-        if name == "parameter":
+		if name == "protocol" :
+			
+			for (k, v) in attrs.items():
+                if k == "id":
+                    self._proto_id = v
+                
+                    
+        elif name == "parameter":
 
             for (k, v) in attrs.items():
                 if k == "id":
@@ -106,7 +116,7 @@ class PMXmlParser(xml.sax.ContentHandler):
             else:
                 raise Exception
 
-        if name == "ecuparam":
+        elif name == "ecuparam":
             for (k, v) in attrs.items():
                 if k == "id":
                     pid = v
@@ -119,7 +129,7 @@ class PMXmlParser(xml.sax.ContentHandler):
 
             self._parameter = PMCUFixedAddressParameter(pid, name, desc, target)
 
-        if name == "switch":
+        elif name == "switch":
             for (k, v) in attrs.items():
                 if k == "id":
                     pid = v
@@ -138,13 +148,13 @@ class PMXmlParser(xml.sax.ContentHandler):
 
             self._parameter = PMCUSwitchParameter(pid, name, desc, address, byte_index, bit_index, target)
 
-        if name == "address":
+        elif name == "address":
             self._address_length = 1
             for (k, v) in attrs.items():
                 if k == "length":
                     self._address_length = int(v)
 
-        if name == "conversion":
+        elif name == "conversion":
             for (k, v) in attrs.items():
                 if k == "units":
                     units = v
@@ -155,33 +165,38 @@ class PMXmlParser(xml.sax.ContentHandler):
 
             self._parameter.add_conversion(PMCUConversion(units, expr, value_format))
 
-        if name == "ecu":
+        elif name == "ecu":
             for (k, v) in attrs.items():
                 if k == "id":
                     self._ecu_ids = v.split(",")
 
-        if name == "ref":
+        elif name == "ref":
             for (k, v) in attrs.items():
                 if k == "parameter":
                     self._parameter.add_dependency(v)
 
     def characters(self, content):
+    	if self._proto_id != "SSM":
+    		return
         self._characters = self._characters + content
 
     def endElement(self, name):
+    	if self._proto_id != "SSM":
+    		return
+    		
         if name == "parameter":
             self._parameters.add(self._parameter)
             self._parameter = None
 
-        if name == "ecuparam":
+        elif name == "ecuparam":
             self._parameters.add(self._parameter)
             self._parameter = None
 
-        if name == "switch":
+        elif name == "switch":
             self._parameters.add(self._parameter)
             self._parameter = None
 
-        if name == "address":
+        elif name == "address":
             self._characters = self._characters.strip()
 
             if len(self._characters.strip()) > 0:
@@ -196,7 +211,7 @@ class PMXmlParser(xml.sax.ContentHandler):
             self._address_length = 0
             self._characters = ''
 
-        if name == "ecu":
+        elif name == "ecu":
             self._ecu_ids = None
 
         self._element_no += 1
