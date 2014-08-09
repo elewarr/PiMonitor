@@ -48,6 +48,7 @@ class PMCUStandardParameter(PMCUParameter):
             value_format = conversion.get_format()
 
             if unit == curr_unit:
+                #print 'unit=' + unit + ', expr=' + expr + ', format=' + value_format
                 # ignore 0xe8
                 index = 1
                 x = 0
@@ -62,18 +63,25 @@ class PMCUStandardParameter(PMCUParameter):
                     x = (value_bytes[0] << 16) | (value_bytes[1] << 8) | value_bytes[2]
                 elif address_length == 4:
                     x = (value_bytes[0] << 24) | (value_bytes[1] << 16) | (value_bytes[2] << 8) | value_bytes[3]
+                #print 'x=' + str(x)
+                x = float(x)
 
                 try:
                     value = eval(expr)
-                except (SyntaxError, ZeroDivisionError, NameError):
+                except (SyntaxError, NameError):
                     return "ERROR EVAL"
+                except (ZeroDivisionError):
+                    return "0.0"
 
+		#print 'value=' + str(value)
+		value = float(value)
                 format_tokens = value_format.split(".")
                 output_format = "%.0f"
                 if len(format_tokens) > 1:
                     output_format = "%." + str(len(format_tokens[1])) + "f"
 
                 value = output_format % value
+                #print 'result=' + value
 
         return value
 

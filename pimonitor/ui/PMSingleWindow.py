@@ -21,6 +21,8 @@ class PMSingleWindow(object):
         self._packets = None
 
         self._x_offset = 0
+        self._sum_value = 0.0
+        self._readings = 0
 
     def set_surface(self, surface):
         if surface is None:
@@ -53,13 +55,23 @@ class PMSingleWindow(object):
             else:
                 value = self._param.get_value(self._packets[0])
 
+        self._readings += 1
+	try:
+            self._sum_value += float(value)
+ 	except:
+	    self._sum_value = 0
+
         value_lbl_width = self._value_font.render(value, self._font_aa, self._fg_color).get_width()
         self._x_offset = (self._width - value_lbl_width) / 2
         value_lbl = self._value_font.render(value, self._font_aa, self._fg_color)
 
+        avg_value_lbl = self._unit_font.render(str(self._sum_value/self._readings), self._font_aa, self._fg_color_dim)
+
         self._surface.blit(self._title_lbl, (2, 2))
         self._surface.blit(value_lbl, (self._x_offset, 10 + self._title_font_size))
         self._surface.blit(self._unit_lbl, (self._end_x_offset, 10 + self._title_font_size + self._value_font_size))
+
+        self._surface.blit(avg_value_lbl, (200, 200))
 
     def set_packets(self, packets):
         self._packets = packets
