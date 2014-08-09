@@ -68,7 +68,7 @@ class PMSingleWindow(object):
         avg_value_lbl = None
         if self._readings != 0:
             avg_value_lbl = self._unit_font.render("%.2f" % (self._sum_value / self._readings), self._font_aa, self._fg_color_dim)
-            self._surface.blit(avg_value_lbl, (self._end_x_offset, 10 + self._title_lbl.get_height() + value_lbl.get_height()))
+            self._surface.blit(avg_value_lbl, (self._x_offset + value_lbl_width/2, 10 + self._title_lbl.get_height() + value_lbl.get_height()))
 
         self._surface.blit(self._title_lbl, (2, 2))
         self._surface.blit(value_lbl, (self._x_offset, 10 + self._title_font_size))

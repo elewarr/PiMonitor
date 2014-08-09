@@ -12,6 +12,7 @@ import time
 import cPickle as pickle
 import platform
 import re
+import sys
 
 from pimonitor.PM import PM
 from pimonitor.PMConnection import PMConnection
@@ -30,8 +31,6 @@ def stringSplitByNumbers(x):
 
 
 if __name__ == '__main__':
-
-    print platform.system()
 
     if platform.system() == "Linux":
         from evdev import InputDevice, list_devices
@@ -66,7 +65,9 @@ if __name__ == '__main__':
         pickle.dump(defined_parameters, output, -1)
         output.close()
 
-    if platform.system() == "Linux":
+    if len(sys.argv) > 1 and sys.argv[1] == "demo":
+        connection = PMDemoConnection()
+    elif platform.system() == "Linux":
         connection = PMConnection()
     else:
         connection = PMDemoConnection()

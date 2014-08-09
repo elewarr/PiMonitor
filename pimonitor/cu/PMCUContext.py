@@ -34,11 +34,15 @@ class PMCUContext(object):
                   (data[PMCUContext.RESPONSE_ROM_ID_OFFSET() + 3] << 8) |
                   (data[PMCUContext.RESPONSE_ROM_ID_OFFSET() + 4])) & 0xFFFFFFFFFF
 
-        return hex(rom_id).lstrip("0x").upper()
+        rom_id = hex(rom_id).lstrip("0x").upper()
+        if rom_id[-1] == "L":
+            rom_id = rom_id[:-1]
+        return rom_id
 
     def match_parameters(self, parameters):
         matched = []
         rom_id = self.get_rom_id()
+        print 'rom id=' + rom_id
 
         for parameter in parameters:
             if parameter.get_target() not in self._targets:
@@ -51,6 +55,7 @@ class PMCUContext(object):
                     matched.append(parameter)
             elif cu_type == PMCUParameter.CU_TYPE_FIXED_ADDRESS_PARAMETER():
                 if parameter.is_supported(rom_id):
+                    print 'match=' + parameter.get_id()
                     parameter.switch_to_id(rom_id)
                     matched.append(parameter)
 
