@@ -73,8 +73,9 @@ class PMXmlParser(xml.sax.ContentHandler):
         return self._parameters
 
     def startElement(self, name, attrs):
-    	if self._proto_id != "SSM":
-    		return
+        if self._proto_id != "SSM":
+            return
+
         pid = None
         desc = None
         target = 0
@@ -86,9 +87,9 @@ class PMXmlParser(xml.sax.ContentHandler):
         byte_index = PMCUParameter.CU_INVALID_BYTE_INDEX()
         bit_index = PMCUParameter.CU_INVALID_BIT_INDEX()
 
-		if name == "protocol" :
+        if name == "protocol" :
 			
-			for (k, v) in attrs.items():
+            for (k, v) in attrs.items():
                 if k == "id":
                     self._proto_id = v
                 
@@ -176,13 +177,13 @@ class PMXmlParser(xml.sax.ContentHandler):
                     self._parameter.add_dependency(v)
 
     def characters(self, content):
-    	if self._proto_id != "SSM":
-    		return
+        if self._proto_id != "SSM":
+            return
         self._characters = self._characters + content
 
     def endElement(self, name):
-    	if self._proto_id != "SSM":
-    		return
+        if self._proto_id != "SSM":
+            return
     		
         if name == "parameter":
             self._parameters.add(self._parameter)
