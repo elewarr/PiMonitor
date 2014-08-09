@@ -55,8 +55,8 @@ class PMDemoConnection(object):
         data.append(0xE8)
         
         for i in range(0, address_len):
-            self._byteval[i] = (self._byteval[i] + 1) % 0xFF
-            #self._byteval[i] = 1 % 0xFF
+            #self._byteval[i] = (self._byteval[i] + 1) % 0xFF
+            self._byteval[i] = 100 % 0xFF
             data.append(self._byteval[i])
         
         checksum = 0

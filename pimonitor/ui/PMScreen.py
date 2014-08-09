@@ -213,7 +213,7 @@ class PMScreen(object):
 
     def log_window(self, index):
         if self._window is not None:
-            PM.log(str(index + 1) + '/' + str(len(self._windows)) + ': ' + self._window.get_parameter().get_id(), 0)
+            PM.log(str(index + 1) + '/' + str(len(self._windows)) + ': ' + self._window.get_parameters()[0].get_id(), 0)
 
     def log(self, message, mid):
         ticks = pygame.time.get_ticks()

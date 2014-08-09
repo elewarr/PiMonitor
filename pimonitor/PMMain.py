@@ -22,6 +22,7 @@ from pimonitor.cu.PMCUParameter import PMCUParameter
 from pimonitor.cu.PMCUContext import PMCUContext
 from pimonitor.ui.PMScreen import PMScreen
 from pimonitor.ui.PMSingleWindow import PMSingleWindow
+from pimonitor.ui.PMWindow import PMWindow
 
 
 def stringSplitByNumbers(x):
@@ -94,31 +95,45 @@ if __name__ == '__main__':
             supported_parameters = ecu_parameters + ecu_switch_parameters + ecu_calculated_parameters + tcu_parameters + tcu_switch_parameters + tcu_calculated_parameters
 
             supported_parameters = sorted(supported_parameters, key=stringSplitByNumbers)
-            for p in supported_parameters:
-                window = PMSingleWindow(p)
+
+            pids = ["E114", "P104", "P122", "P97", "P203"]
+            first_window_parameters = []
+
+            for parameter in supported_parameters:
+                if parameter.get_id() in pids:
+                    pids.remove(parameter.get_id())
+                    first_window_parameters.append(parameter)
+
+            window = PMWindow(first_window_parameters)
+            screen.add_window(window)
+
+            for parameter in supported_parameters:
+                window = PMSingleWindow(parameter)
                 screen.add_window(window)
 
             screen.next_window()
 
             while True:
                 window = screen.get_window()
-                param = window.get_parameter()
-                # parameters = param.get_parameters()
-                #if parameters:
-                #    packets = connection.read_parameters(parameters)
-                #    window.set_packets(packets)
-                #else:
-                if param.get_cu_type() == PMCUParameter.CU_TYPE_STD_PARAMETER():
-                    packet = connection.read_parameter(param)
-                    window.set_packets([packet])
-                elif param.get_cu_type() == PMCUParameter.CU_TYPE_FIXED_ADDRESS_PARAMETER():
-                    packet = connection.read_parameter(param)
-                    window.set_packets([packet])
-                elif param.get_cu_type() == PMCUParameter.CU_TYPE_SWITCH_PARAMETER():
-                    packet = connection.read_parameter(param)
-                    window.set_packets([packet])
-                elif param.get_cu_type() == PMCUParameter.CU_TYPE_CALCULATED_PARAMETER():
-                    packets = connection.read_parameters(param.get_dependencies())
+                parameters = window.get_parameters()
+
+                # TODO refactor - not possible to test at the moment, so leave working part untouched
+                if len(parameters) == 1:
+                    parameter = parameters[0]
+                    if parameter.get_cu_type() == PMCUParameter.CU_TYPE_STD_PARAMETER():
+                        packet = connection.read_parameter(parameter)
+                        window.set_packets([packet])
+                    elif parameter.get_cu_type() == PMCUParameter.CU_TYPE_FIXED_ADDRESS_PARAMETER():
+                        packet = connection.read_parameter(parameter)
+                        window.set_packets([packet])
+                    elif parameter.get_cu_type() == PMCUParameter.CU_TYPE_SWITCH_PARAMETER():
+                        packet = connection.read_parameter(parameter)
+                        window.set_packets([packet])
+                    elif parameter.get_cu_type() == PMCUParameter.CU_TYPE_CALCULATED_PARAMETER():
+                        packets = connection.read_parameters(parameter.get_dependencies())
+                        window.set_packets(packets)
+                elif len(parameters) > 1:
+                    packets = connection.read_parameters(parameters)
                     window.set_packets(packets)
 
                 screen.render()

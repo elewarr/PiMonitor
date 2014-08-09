@@ -13,11 +13,11 @@ class PMSingleWindow(object):
     classdocs
     """
 
-    def __init__(self, param):
+    def __init__(self, parameter):
         self._fg_color = pygame.Color(230, 166, 0)
         self._fg_color_dim = pygame.Color(200, 140, 0)
         self._bg_color = pygame.Color(0, 0, 0)
-        self._param = param
+        self._parameters = [parameter]
         self._packets = None
 
         self._x_offset = 0
@@ -27,6 +27,8 @@ class PMSingleWindow(object):
     def set_surface(self, surface):
         if surface is None:
             return
+
+        parameter = self._parameters[0]
 
         self._surface = surface
         self._width = self._surface.get_width()
@@ -42,18 +44,19 @@ class PMSingleWindow(object):
 
         self._font_aa = 1
 
-        self._title_lbl = self._title_font.render(self._param.get_name(), self._font_aa, self._fg_color)
+        self._title_lbl = self._title_font.render(parameter.get_name(), self._font_aa, self._fg_color)
 
-        self._unit_lbl = self._unit_font.render(self._param.get_default_unit(), self._font_aa, self._fg_color_dim)
+        self._unit_lbl = self._unit_font.render(parameter.get_default_unit(), self._font_aa, self._fg_color_dim)
         self._end_x_offset = self._width - self._unit_lbl.get_width() - 10
 
     def render(self):
         value = "??"
+        parameter = self._parameters[0]
         if self._packets is not None:
-            if self._param.get_cu_type() == PMCUParameter.CU_TYPE_CALCULATED_PARAMETER():
-                value = self._param.get_calculated_value(self._packets)
+            if parameter.get_cu_type() == PMCUParameter.CU_TYPE_CALCULATED_PARAMETER():
+                value = parameter.get_calculated_value(self._packets)
             else:
-                value = self._param.get_value(self._packets[0])
+                value = parameter.get_value(self._packets[0])
 
         try:
             self._sum_value += float(value)
@@ -81,5 +84,5 @@ class PMSingleWindow(object):
     def set_packets(self, packets):
         self._packets = packets
 
-    def get_parameter(self):
-        return self._param
+    def get_parameters(self):
+        return self._parameters
