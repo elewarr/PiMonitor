@@ -96,16 +96,16 @@ if __name__ == '__main__':
 
             supported_parameters = sorted(supported_parameters, key=stringSplitByNumbers)
 
-            pids = ["E114", "P104", "P122", "P97", "P203"]
-            first_window_parameters = []
-
-            for parameter in supported_parameters:
-                if parameter.get_id() in pids:
-                    pids.remove(parameter.get_id())
-                    first_window_parameters.append(parameter)
-
-            window = PMWindow(first_window_parameters)
-            screen.add_window(window)
+            # pids = ["E114", "P104", "P122", "P97", "P203"]
+            # first_window_parameters = []
+            #
+            # for parameter in supported_parameters:
+            #     if parameter.get_id() in pids:
+            #         pids.remove(parameter.get_id())
+            #         first_window_parameters.append(parameter)
+            #
+            # window = PMWindow(first_window_parameters)
+            # screen.add_window(window)
 
             for parameter in supported_parameters:
                 window = PMSingleWindow(parameter)
@@ -146,4 +146,3 @@ if __name__ == '__main__':
             continue
 
     screen.close()
-
