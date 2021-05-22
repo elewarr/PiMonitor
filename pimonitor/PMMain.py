@@ -60,7 +60,7 @@ if __name__ == '__main__':
         defined_parameters = pickle.load(serializedDataFile)
         serializedDataFile.close()
     else:
-        defined_parameters = parser.parse("logger_METRIC_EN_v263.xml")
+        defined_parameters = parser.parse("logger_METRIC_EN_v352.xml")
         defined_parameters = sorted(defined_parameters, key=lambda x: x.get_id(), reverse=True)
         output = open("data/data.pkl", "wb")
         pickle.dump(defined_parameters, output, -1)

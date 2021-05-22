@@ -35,7 +35,7 @@ class PMScreen(object):
         if platform.system() == "Linux":
             pygame.display.set_mode((0, 0), pygame.FULLSCREEN, self._color_depth)
         else:
-            pygame.display.set_mode((320, 240), 0, self._color_depth)
+            pygame.display.set_mode((640, 480), 0, self._color_depth)
 
         self._surface = pygame.display.get_surface()
 
